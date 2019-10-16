@@ -1,0 +1,47 @@
+require 'bundler'
+Bundler.require
+
+require_relative 'lib/game'
+require_relative 'lib/player'
+
+puts " ------------------------------------------------\n
+|Bienvenue sur 'ILS VEULENT TOUS MA POO' ! \n     |
+|Le but du jeu est d'être le dernier survivant !|\n
+-------------------------------------------------"
+
+puts "Quel est ton prenom ?"
+prenom = gets.chomp.to_s
+user  = HumanPlayer.new("#{prenom}")
+
+player1 = HumanPlayer.new("Josiane")
+player2 = HumanPlayer.new("José")
+enemies = [(player1 = Player.new("Josiane")), (player2 = Player.new("José"))]
+
+while user.life_points >0 && (player1.life_points > 0 || player2.life_points >0)
+  puts user.show_state
+  puts "Quelle action veux-tu effectuer ?"
+  puts "a - chercher une meilleure arme"
+  puts "s - chercher à se soigner "
+  puts "Ou attaquer un joueur en vue :"
+  puts "0 - #{player1.show_state} "
+  puts "1 - #{player2.show_state}"
+  reply1 = gets.chomp
+    if reply1 == "a" then user.search_weapon
+      elsif reply1 == "s" then user.search_health_pack
+      elsif reply1 == "0" then user.attacks(player1)
+      elsif reply1 == "1" then user.attacks(player2)
+    end
+  puts "appuie sur 'Entrée' pour continuer "
+
+  pause = gets.chomp
+  break if player1.life_points <= 0 || player2.life_points <= 0
+  puts "Les autres joueurs t'attaquent !"
+    enemies.each do |enemy|
+      if player1.life_points > 0 || player2.life_points > 0
+      then enemy.attacks(user)
+      end
+    end
+end
+
+binding.pry
+
